@@ -19,6 +19,8 @@ import os
 import uuid
 from abc import ABCMeta, abstractmethod
 from typing import Any, Dict
+from packaging.specifiers import SpecifierSet
+from packaging.version import Version
 
 from six import string_types, with_metaclass
 from six.moves.urllib.parse import urlparse
@@ -97,6 +99,7 @@ class EstimatorBase(with_metaclass(ABCMeta, object)):  # pylint: disable=too-man
     LAUNCH_PS_ENV_NAME = "sagemaker_parameter_server_enabled"
     LAUNCH_MPI_ENV_NAME = "sagemaker_mpi_enabled"
     LAUNCH_SM_DDP_ENV_NAME = "sagemaker_distributed_dataparallel_enabled"
+    LAUNCH_MWMS_ENV_NAME = "sagemaker_multi_worker_mirrored_strategy_enabled"
     INSTANCE_TYPE = "sagemaker_instance_type"
     MPI_NUM_PROCESSES_PER_HOST = "sagemaker_mpi_num_of_processes_per_host"
     MPI_CUSTOM_MPI_OPTIONS = "sagemaker_mpi_custom_mpi_options"
@@ -2745,6 +2748,20 @@ class Framework(EstimatorBase):
                 self.environment = {}
             self.environment[DEBUGGER_FLAG] = "0"
 
+    def _validate_mwms_config(self):
+        """Validate Multi Worker Mirrored Strategy configuration."""
+        minimum_supported_framework_version = {
+                                                'tensorflow': {'framework_version': '2.9'},
+                                            }
+        if self._framework_name in minimum_supported_framework_version:
+            for version_argument in minimum_supported_framework_version[self._framework_name]:
+                current = getattr(self, version_argument)
+                threshold = minimum_supported_framework_version[self._framework_name][version_argument]
+                if Version(current) in SpecifierSet(f"< {threshold}"):
+                    raise ValueError("Multi Worker Mirrored Strategy is only supported from {} {} but received {}".format(version_argument, threshold, current))
+        else:
+            raise ValueError("Multi Worker Mirrored Strategy is currently only supported with {} frameworks but received {}".format(minimum_supported_framework_version.keys(), self._framework_name))
+
     def _model_source_dir(self):
         """Get the appropriate value to pass as ``source_dir`` to a model constructor.
 
@@ -3096,6 +3113,12 @@ class Framework(EstimatorBase):
                 distribution_config[self.SM_DDP_CUSTOM_MPI_OPTIONS] = smdistributed[
                     "dataparallel"
                 ].get("custom_mpi_options", "")
+
+        if "multi_worker_mirrored_strategy" in distribution:
+            mwms_enabled = distribution.get("multi_worker_mirrored_strategy").get("enabled", False)
+            if mwms_enabled:
+                self._validate_mwms_config()
+            distribution_config[self.LAUNCH_MWMS_ENV_NAME] = mwms_enabled
 
         return distribution_config
 
