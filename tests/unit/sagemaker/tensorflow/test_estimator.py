@@ -571,8 +571,8 @@ def test_fit_mwms_unsupported(time, strftime, sagemaker_session):
         inputs = "s3://mybucket/train"
         tf.fit(inputs=inputs)
 
-    assert 'only supported from' in str(error)
-    assert 'but received' in str(error)
+    assert "only supported from" in str(error)
+    assert "but received" in str(error)
 
 
 def test_hyperparameters_no_model_dir(

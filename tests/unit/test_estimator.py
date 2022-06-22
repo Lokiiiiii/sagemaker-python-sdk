@@ -3521,9 +3521,9 @@ def test_mwms_distribution_configuration(sagemaker_session):
     )
     with pytest.raises(ValueError) as error:
         framework._distribution_configuration(distribution=DISTRIBUTION_MWMS_ENABLED)
-    
-    assert 'only supported with' in str(error)
-    assert 'but received' in str(error)
+
+    assert "only supported with" in str(error)
+    assert "but received" in str(error)
 
 
 def test_image_name_map(sagemaker_session):

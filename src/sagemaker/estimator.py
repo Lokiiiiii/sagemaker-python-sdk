@@ -2751,16 +2751,26 @@ class Framework(EstimatorBase):
     def _validate_mwms_config(self):
         """Validate Multi Worker Mirrored Strategy configuration."""
         minimum_supported_framework_version = {
-                                                'tensorflow': {'framework_version': '2.9'},
-                                            }
+            "tensorflow": {"framework_version": "2.9"},
+        }
         if self._framework_name in minimum_supported_framework_version:
             for version_argument in minimum_supported_framework_version[self._framework_name]:
                 current = getattr(self, version_argument)
-                threshold = minimum_supported_framework_version[self._framework_name][version_argument]
+                threshold = minimum_supported_framework_version[self._framework_name][
+                    version_argument
+                ]
                 if Version(current) in SpecifierSet(f"< {threshold}"):
-                    raise ValueError("Multi Worker Mirrored Strategy is only supported from {} {} but received {}".format(version_argument, threshold, current))
+                    raise ValueError(
+                        "Multi Worker Mirrored Strategy is only supported from {} {} but received {}".format(
+                            version_argument, threshold, current
+                        )
+                    )
         else:
-            raise ValueError("Multi Worker Mirrored Strategy is currently only supported with {} frameworks but received {}".format(minimum_supported_framework_version.keys(), self._framework_name))
+            raise ValueError(
+                "Multi Worker Mirrored Strategy is currently only supported with {} frameworks but received {}".format(
+                    minimum_supported_framework_version.keys(), self._framework_name
+                )
+            )
 
     def _model_source_dir(self):
         """Get the appropriate value to pass as ``source_dir`` to a model constructor.
