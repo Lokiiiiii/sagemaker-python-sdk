@@ -2761,13 +2761,13 @@ class Framework(EstimatorBase):
                 ]
                 if Version(current) in SpecifierSet(f"< {threshold}"):
                     raise ValueError(
-                        "Multi Worker Mirrored Strategy is only supported from {} {} but received {}".format(
-                            version_argument, threshold, current
-                        )
+                        "Multi Worker Mirrored Strategy is only supported "
+                        "from {} {} but received {}".format(version_argument, threshold, current)
                     )
         else:
             raise ValueError(
-                "Multi Worker Mirrored Strategy is currently only supported with {} frameworks but received {}".format(
+                "Multi Worker Mirrored Strategy is currently only supported "
+                "with {} frameworks but received {}".format(
                     minimum_supported_framework_version.keys(), self._framework_name
                 )
             )
