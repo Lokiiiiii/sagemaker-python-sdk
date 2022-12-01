@@ -3045,6 +3045,31 @@ class Framework(EstimatorBase):
 
         self._hyperparameters.update(hyperparams)
 
+    def _validate_and_set_debugger_configs(self):
+        """Set defaults for debugging."""
+        super(Framework, self)._validate_and_set_debugger_configs()
+
+        # Disable debugger if checkpointing is enabled by the customer
+        if self.checkpoint_s3_uri and self.checkpoint_local_path and self.debugger_hook_config:
+            if self._framework_name in {"mxnet", "pytorch", "tensorflow"}:
+                if is_pipeline_variable(self.instance_count):
+                    logger.warning(
+                        "SMDebug does not currently support distributed training jobs "
+                        "with checkpointing enabled. Therefore, to allow parameterized "
+                        "instance_count and allow to change it to any values in execution time, "
+                        "the debugger_hook_config is disabled."
+                    )
+                    self.debugger_hook_config = False
+                elif self.instance_count > 1 or (
+                    hasattr(self, "distribution")
+                    and self.distribution is not None  # pylint: disable=no-member
+                ):
+                    logger.info(
+                        "SMDebug Does Not Currently Support \
+                        Distributed Training Jobs With Checkpointing Enabled"
+                    )
+                    self.debugger_hook_config = False
+
     def _validate_mwms_config(self):
         """Validate Multi Worker Mirrored Strategy configuration."""
         minimum_supported_framework_version = {
