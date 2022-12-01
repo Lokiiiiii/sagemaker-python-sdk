@@ -19,10 +19,10 @@ import os
 import re
 import uuid
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Union, Optional, List
+
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
-from typing import Any, Dict, Union, Optional, List
 
 from six import string_types, with_metaclass
 from six.moves.urllib.parse import urlparse
