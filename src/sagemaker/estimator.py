@@ -85,10 +85,7 @@ from sagemaker.utils import (
 )
 from sagemaker.workflow import is_pipeline_variable
 from sagemaker.workflow.entities import PipelineVariable
-from sagemaker.workflow.pipeline_context import (
-    PipelineSession,
-    runnable_by_pipeline,
-)
+from sagemaker.workflow.pipeline_context import PipelineSession, runnable_by_pipeline
 
 logger = logging.getLogger(__name__)
 
@@ -993,10 +990,7 @@ class EstimatorBase(with_metaclass(ABCMeta, object)):  # pylint: disable=too-man
             parse_result = urlparse(rule.rule_parameters["source_s3_uri"])
             if parse_result.scheme != "s3":
                 desired_s3_uri = os.path.join(
-                    "s3://",
-                    self.sagemaker_session.default_bucket(),
-                    rule.name,
-                    str(uuid.uuid4()),
+                    "s3://", self.sagemaker_session.default_bucket(), rule.name, str(uuid.uuid4())
                 )
                 s3_uri = S3Uploader.upload(
                     local_path=rule.rule_parameters["source_s3_uri"],
@@ -3072,9 +3066,7 @@ class Framework(EstimatorBase):
 
     def _validate_mwms_config(self):
         """Validate Multi Worker Mirrored Strategy configuration."""
-        minimum_supported_framework_version = {
-            "tensorflow": {"framework_version": "2.9"},
-        }
+        minimum_supported_framework_version = {"tensorflow": {"framework_version": "2.9"}}
         if self._framework_name in minimum_supported_framework_version:
             for version_argument in minimum_supported_framework_version[self._framework_name]:
                 current = getattr(self, version_argument)
