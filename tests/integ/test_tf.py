@@ -214,8 +214,8 @@ def test_mwms_gpu(
         hyperparameters={
             "model_name_or_path": "bert-base-uncased",
             "output_dir": "/opt/ml/model",
-            "dataset_name": "glue",
-            "dataset_config_name": "sst2",
+            "dataset_name": "wikitext",
+            "dataset_config_name": "wikitext-2-raw-v1",
             "do_train": True,
             "do_eval": False,
             "max_seq_length": 128,
