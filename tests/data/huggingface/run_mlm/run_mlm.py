@@ -509,12 +509,7 @@ def main():
         logger.info(f"Sample {index} of the training set: {train_dataset[index]}.")
     # endregion
 
-    communication_options = tf.distribute.experimental.CommunicationOptions(
-        implementation=tf.distribute.experimental.CommunicationImplementation.NCCL
-    )
-    strategy = tf.distribute.MultiWorkerMirroredStrategy(
-        communication_options=communication_options
-    )
+    strategy = tf.distribute.MultiWorkerMirroredStrategy()
 
     with strategy.scope():
         # region Prepare model

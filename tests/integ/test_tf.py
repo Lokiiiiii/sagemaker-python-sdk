@@ -219,16 +219,13 @@ def test_mwms_gpu(
             "do_train": True,
             "do_eval": False,
             "max_seq_length": 128,
-            "num_train_epochs": 1,
+            "num_train_epochs": 10,
             "max_steps": 16,
             "overwrite_output_dir": True,
             "save_strategy": "no",
             "evaluation_strategy": "no",
             "logging_strategy": "epoch",
             "per_device_train_batch_size": 16,
-        },
-        environment={
-            "NCCL_DEBUG": "INFO",
         },
         max_run=60 * 60 * 1,  # 1 hour
         role=ROLE,
